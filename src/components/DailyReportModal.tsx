@@ -90,7 +90,7 @@ export const DailyReportModal: React.FC<DailyReportModalProps> = ({
               <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
                 <Code2 className="h-4 w-4" />
               </div>
-              <span className="font-medium">Kodlama & Geliştirme (Cloud Code / Antigravity / WebStorm)</span>
+              <span className="font-medium">Kodlama & Geliştirme (Cloud Code / Antigravity / WezTerm)</span>
             </div>
             <span className="text-xs font-mono font-bold text-emerald-400">
               {formatDuration(stats.productiveSeconds)}

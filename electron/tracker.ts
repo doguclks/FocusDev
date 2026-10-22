@@ -13,8 +13,8 @@ const PRODUCTIVE_PROCESSES = [
   'antigravity',
   'cursor',
   'devenv',
-  'webstorm',
-  'webstorm64',
+  'wezterm-gui',
+  'wezterm',
   'idea64',
   'pycharm64',
   'rider64',
@@ -36,7 +36,6 @@ const PRODUCTIVE_PROCESSES = [
   'zsh',
   'conhost',
   'alacritty',
-  'wezterm',
   'warp',
   'hyper',
   'tabby',
@@ -146,11 +145,10 @@ export class WindowTracker {
     // Whitelist check
     const isWhitelisted = settings.whitelistKeywords.some((kw) => titleLower.includes(kw.toLowerCase()));
 
-    // Productivity classification: IDEs, Editors, Terminals
+    // Productivity classification: IDEs, Editors, WezTerm & Developer Terminals
     const isIDE =
       PRODUCTIVE_PROCESSES.some((p) => procLower.includes(p)) ||
-      titleLower.includes('webstorm') ||
-      titleLower.includes('jetbrains') ||
+      titleLower.includes('wezterm') ||
       titleLower.includes('terminal') ||
       titleLower.includes('powershell') ||
       titleLower.includes('cmd.exe') ||
@@ -161,7 +159,8 @@ export class WindowTracker {
       titleLower.includes('neovim') ||
       titleLower.includes('nvim') ||
       titleLower.includes('sublime') ||
-      titleLower.includes('android studio');
+      titleLower.includes('android studio') ||
+      titleLower.includes('jetbrains');
 
     let category: ActivityCategory = 'other';
     let isYouTube = false;

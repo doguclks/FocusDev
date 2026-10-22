@@ -22,7 +22,7 @@
 Geliştiriciler kod yazarken arka planda müzik/lofi dinler veya teknik bir videoya bakmak isterken kolayca YouTube önerilerinde kaybolabilir. Standart site engelleyiciler arka planda çalan müziği de engelleyerek motivasyonu düşürür.
 
 **Focus Dev**, Windows `user32.dll` API'lerini kullanarak **yalnızca ön planda (foreground) aktif izlenen pencereleri** sıfır CPU tüketimiyle takip eder:
-- YouTube arkada müzik çalarken siz **VS Code**, **WebStorm** veya **Terminal**'de kod yazıyorsanız, YouTube sayacı durur ve üretken çalışma süreniz sayılır.
+- YouTube arkada müzik çalarken siz **VS Code**, **WezTerm**, **Antigravity** veya **Terminal**'de kod yazıyorsanız, YouTube sayacı durur ve üretken çalışma süreniz sayılır.
 - YouTube'da aralıksız dikkat dağıtıcı video izlendiğinde nazikçe uyarır (**Gentle Nudge**).
 - Tüm görevlerinizi, standup notlarınızı ve günlük akışınızı klavyeden elinizi kaldırmadan **Vim ergonomisiyle** yönetmenizi sağlar.
 
@@ -52,9 +52,9 @@ Geliştiriciler kod yazarken arka planda müzik/lofi dinler veya teknik bir vide
 - Dahili mikrofon butonuna tıklayarak veya Normal modda **`v`** tuşuna basarak Windows Yerleşik Sesle Yazma (**`Win + H`**) servisi tetiklenir.
 - Türkçe dikte desteğiyle sesli komut doğrudan aktif input alanına yazıya dökülür.
 
-### 💻 4. Geliştirici Odaklı Süreç Tanıma (WebStorm & Terminaller)
-- Yalnızca temel editörleri değil; **WebStorm**, **IntelliJ IDEA**, **PyCharm**, **Rider**, **Fleet** gibi tüm JetBrains IDE'lerini tanır.
-- **Windows Terminal**, **PowerShell**, **CMD**, **Git-Bash**, **Alacritty**, **WezTerm**, **Warp** ve WebStorm yerleşik terminallerini doğrudan **"Üretken Kodlama & Araçlar"** kategorisine dahil eder.
+### 💻 4. Geliştirici Odaklı Süreç Tanıma (WezTerm & Terminaller)
+- Rust tabanlı GPU hızlandırmalı **WezTerm** terminalini (`wezterm-gui.exe`, `wezterm`) doğrudan algılar.
+- **Windows Terminal**, **PowerShell**, **CMD**, **Git-Bash**, **Alacritty**, **Warp** gibi geliştirici terminallerini ve editörleri doğrudan **"Üretken Kodlama & Araçlar"** kategorisine dahil eder.
 
 ### 🔔 5. Akıllı Dürtme (Gentle Nudge)
 - YouTube'da aralıksız 5 dakika geçirildiğinde ekranın sağ altında zarif bir bildirim belirir:  
@@ -181,7 +181,7 @@ focus-dev/
 ├── bin-win/                 # Native C# WinTracker.exe ikili dosyası
 ├── electron/
 │   ├── main.ts              # Electron ana süreç, tray ve kısayollar
-│   ├── tracker.ts           # Süreç sınıflandırma (IDE, WebStorm, YouTube)
+│   ├── tracker.ts           # Süreç sınıflandırma (IDE, WezTerm, YouTube)
 │   ├── storage.ts           # SQLite3 veritabanı sürücüsü & migrasyonlar
 │   ├── database.ts          # SQLite tabloları (todos, logs, notes, stats)
 │   ├── preload.ts           # Güvenli contextBridge IPC API'leri
