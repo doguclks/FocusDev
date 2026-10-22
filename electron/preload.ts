@@ -43,10 +43,22 @@ const api = {
     ipcRenderer.on('quick-capture:focus', listener);
     return () => ipcRenderer.removeListener('quick-capture:focus', listener);
   },
+  hideQuickTasks: () => ipcRenderer.invoke('quick-tasks:hide'),
+  toggleQuickTasks: () => ipcRenderer.invoke('quick-tasks:toggle'),
+  onQuickTasksFocus: (callback: () => void) => {
+    const listener = () => callback();
+    ipcRenderer.on('quick-tasks:focus', listener);
+    return () => ipcRenderer.removeListener('quick-tasks:focus', listener);
+  },
   onTodosChanged: (callback: (todo: any) => void) => {
     const listener = (_: any, todo: any) => callback(todo);
     ipcRenderer.on('todos:changed', listener);
     return () => ipcRenderer.removeListener('todos:changed', listener);
+  },
+  onTodoDeleted: (callback: (id: string) => void) => {
+    const listener = (_: any, id: string) => callback(id);
+    ipcRenderer.on('todos:deleted', listener);
+    return () => ipcRenderer.removeListener('todos:deleted', listener);
   },
   onDailyLogChanged: (callback: (log: any) => void) => {
     const listener = (_: any, log: any) => callback(log);

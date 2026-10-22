@@ -42,7 +42,14 @@ Geliştiriciler kod yazarken arka planda müzik/lofi dinler veya teknik bir vide
 - **`Ctrl + Q`**: Herhangi bir moddayken anında iptal edip kapatma.
 - **Canlı Senkronizasyon:** Kaydedilen görev ve notlar arka planda SQLite'a yazılır ve ana ekranda anında güncellenir.
 
-### 📋 2. Vim Ergonomili Notlar & Ajanda
+### 📋 2. Global Hızlı Görevler HUD (`Alt + Shift + M`)
+- Ana uygulamayı açmadan, Windows'un herhangi bir yerindeyken **`Alt + Shift + M`** tuşlarına basarak bugünün tüm görevlerini yüzen şık bir HUD penceresinde görüntüleyin.
+- **Hızlı Tikleme:** `j / k` ile görevler arasında gezinip **`x`**, **`Space`** veya **`Enter`** ile anında tamamlandı olarak işaretleyin.
+- **Filtreler:** `Tab` tuşu ile *Tümü*, *Yapılacaklar* ve *Tamamlananlar* arasında geçiş yapın.
+- **Hızlı Ekleme:** `o` veya `n` tuşuyla doğrudan HUD içerisinden yeni görev ekleyin.
+- **Akordeon:** `e` tuşuyla seçili görevin detayını genişletin.
+
+### 📝 3. Vim Ergonomili Notlar & Ajanda
 - **Tam Klavye Kontrolü:** Fareye dokunmadan `j / k` ile görevler arasında gezinme.
 - **Akordeon Detay Görünümü:** Uzun notlar veya görevler için `Enter` veya `Space` tuşuna basarak aşağı doğru açılan şık detay çekmecesi.
 - **Inline Düzenleme & Silme:** `i` veya `e` ile görevi satır içi düzenleme, `d` ile silme, `x` ile tamamlandı işaretleme.
@@ -107,6 +114,19 @@ Geliştiriciler kod yazarken arka planda müzik/lofi dinler veya teknik bir vide
 | `Enter` | Görevi / Notu kaydet ve pencereyi kapat |
 | `Ctrl + [` / `Esc` | Yazı yazılıyorsa `NORMAL` moda dön; Normal moddaysa pencereyi kapat |
 | `Ctrl + Q` | Hangi modda olursa olsun pencereyi anında iptal edip kapat |
+
+### Global Hızlı Görevler HUD (`Alt + Shift + M`)
+| Kısayol | İşlev |
+| :--- | :--- |
+| `Alt + Shift + M` | Windows genelinde Hızlı Görevler HUD penceresini aç / kapat |
+| `j` / `k` | Görevler arasında aşağı / yukarı gezin |
+| `x` / `Space` / `Enter` | Seçili görevi anında tamamlandı veya yapılacak olarak işaretle |
+| `e` | Görevin akordeon detayını aç / kapat |
+| `o` / `n` | HUD içerisinden hızlı yeni görev ekleme satırını aç |
+| `Tab` | Filtreyi döngüsel değiştir (`Tümü` ➔ `Yapılacaklar` ➔ `Bitenler`) |
+| `d` | Seçili görevi sil |
+| `q` / `Esc` | HUD penceresini kapat |
+| `Ctrl + Q` | Pencereyi anında kapat |
 
 ---
 

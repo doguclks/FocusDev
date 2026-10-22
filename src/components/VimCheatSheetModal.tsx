@@ -58,6 +58,19 @@ export const VimCheatSheetModal: React.FC<VimCheatSheetModalProps> = ({ isOpen, 
       ],
     },
     {
+      title: '📋 Hızlı Görevler HUD (Alt + Shift + M)',
+      shortcuts: [
+        { key: 'Alt + Shift + M', desc: 'Bugünün görevlerini gösteren yüzen HUD penceresini aç / kapat' },
+        { key: 'j / k', desc: 'Görevler arasında aşağı / yukarı gezin' },
+        { key: 'x / Space / Enter', desc: 'Seçili görevi anında tamamla veya geri al' },
+        { key: 'e', desc: 'Seçili görevin akordeon detayını aç / kapat' },
+        { key: 'o / n', desc: 'HUD içerisinden hızlı yeni görev ekle' },
+        { key: 'Tab', desc: 'Filtreyi değiştir (Tümü ➔ Yapılacaklar ➔ Bitenler)' },
+        { key: 'd', desc: 'Seçili görevi sil' },
+        { key: 'q / Esc', desc: 'HUD penceresini kapat' },
+      ],
+    },
+    {
       title: '🎙️ Sesli Komut & Zeka',
       shortcuts: [
         { key: 'v', desc: 'Sesli Dikteyi (Mikrofon) başlat / durdur' },

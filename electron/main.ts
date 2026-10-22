@@ -8,6 +8,7 @@ import { WindowInfo, DeepFocusState, NudgeEvent } from './types';
 
 let mainWindow: BrowserWindow | null = null;
 let quickCaptureWindow: BrowserWindow | null = null;
+let quickTasksWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
 let isQuitting = false;
 let currentViewMode: 'full' | 'widget' | 'zen' = 'full';
@@ -139,6 +140,63 @@ function toggleQuickCapture() {
   }
 }
 
+function createQuickTasksWindow() {
+  const iconIco = getAssetPath('icon.ico');
+  const iconPng = getAssetPath('icon.png');
+  const appIcon = fs.existsSync(iconIco) ? iconIco : iconPng;
+
+  quickTasksWindow = new BrowserWindow({
+    title: 'Focus Dev - Quick Tasks',
+    width: 560,
+    height: 490,
+    minWidth: 440,
+    minHeight: 380,
+    frame: false,
+    backgroundColor: '#020617',
+    alwaysOnTop: true,
+    skipTaskbar: true,
+    resizable: true,
+    movable: true,
+    autoHideMenuBar: true,
+    show: false,
+    icon: appIcon,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true,
+    },
+  });
+
+  quickTasksWindow.setMenuBarVisibility(false);
+  quickTasksWindow.removeMenu();
+
+  const distHtmlPath = path.join(__dirname, '..', 'dist', 'index.html');
+  const isDevMode = process.env.NODE_ENV === 'development';
+
+  if (isDevMode) {
+    quickTasksWindow.loadURL('http://localhost:5789?quickTasks=1').catch(() => {
+      quickTasksWindow?.loadFile(distHtmlPath, { hash: 'quick-tasks', query: { quickTasks: '1' } });
+    });
+  } else {
+    quickTasksWindow.loadFile(distHtmlPath, { hash: 'quick-tasks', query: { quickTasks: '1' } });
+  }
+}
+
+function toggleQuickTasks() {
+  if (!quickTasksWindow || quickTasksWindow.isDestroyed()) {
+    createQuickTasksWindow();
+  }
+
+  if (quickTasksWindow?.isVisible()) {
+    quickTasksWindow.hide();
+  } else {
+    quickTasksWindow?.center();
+    quickTasksWindow?.show();
+    quickTasksWindow?.focus();
+    quickTasksWindow?.webContents.send('quick-tasks:focus');
+  }
+}
+
 function createTray() {
   try {
     const icoPath = getAssetPath('icon.ico');
@@ -166,6 +224,10 @@ function createTray() {
       {
         label: '⚡ Hızlı Görev / Not Ekle (Alt+Shift+N)',
         click: () => toggleQuickCapture(),
+      },
+      {
+        label: '📋 Bugünün Görevleri (Alt+Shift+M)',
+        click: () => toggleQuickTasks(),
       },
       { type: 'separator' },
       {
@@ -316,6 +378,25 @@ public class KeyHelper {
       toggleQuickCapture();
     });
 
+    ipcMain.handle('quick-tasks:hide', () => {
+      quickTasksWindow?.hide();
+    });
+
+    ipcMain.handle('quick-tasks:toggle', () => {
+      toggleQuickTasks();
+    });
+
+    // Helper to broadcast todo changes to all windows
+    const broadcastTodo = (todo: any) => {
+      mainWindow?.webContents.send('todos:changed', todo);
+      quickTasksWindow?.webContents.send('todos:changed', todo);
+    };
+
+    const broadcastTodoDeleted = (id: string) => {
+      mainWindow?.webContents.send('todos:deleted', id);
+      quickTasksWindow?.webContents.send('todos:deleted', id);
+    };
+
     // --- SQLite Todos & Notes Handlers ---
     ipcMain.handle('todos:get-by-date', (_, date: string) => {
       const rows = storage.db.getTodosByDate(date);
@@ -343,14 +424,14 @@ public class KeyHelper {
         orderIndex: r.order_index,
         createdAt: r.created_at,
       };
-      mainWindow?.webContents.send('todos:changed', created);
+      broadcastTodo(created);
       return created;
     });
 
     ipcMain.handle('todos:toggle', (_, id: string) => {
       const r = storage.db.toggleTodo(id);
       if (!r) return null;
-      return {
+      const updated = {
         id: r.id,
         date: r.date,
         text: r.text,
@@ -360,12 +441,14 @@ public class KeyHelper {
         orderIndex: r.order_index,
         createdAt: r.created_at,
       };
+      broadcastTodo(updated);
+      return updated;
     });
 
     ipcMain.handle('todos:update', (_, id: string, text: string, priority?: string) => {
       const r = storage.db.updateTodo(id, text, priority);
       if (!r) return null;
-      return {
+      const updated = {
         id: r.id,
         date: r.date,
         text: r.text,
@@ -375,10 +458,16 @@ public class KeyHelper {
         orderIndex: r.order_index,
         createdAt: r.created_at,
       };
+      broadcastTodo(updated);
+      return updated;
     });
 
     ipcMain.handle('todos:delete', (_, id: string) => {
-      return storage.db.deleteTodo(id);
+      const res = storage.db.deleteTodo(id);
+      if (res) {
+        broadcastTodoDeleted(id);
+      }
+      return res;
     });
 
     ipcMain.handle('todos:rollover', (_, fromDate: string, toDate: string) => {
@@ -533,6 +622,7 @@ public class KeyHelper {
 
     createMainWindow();
     createQuickCaptureWindow();
+    createQuickTasksWindow();
     createTray();
     tracker.start();
 
@@ -548,7 +638,22 @@ public class KeyHelper {
         });
       }
     } catch (err) {
-      console.warn('Global shortcut registration error:', err);
+      console.warn('Global shortcut Alt+Shift+N registration error:', err);
+    }
+
+    // Register Global Shortcut for Quick Tasks HUD (Alt+Shift+M / Ctrl+Shift+M)
+    try {
+      const regTasks = globalShortcut.register('Alt+Shift+M', () => {
+        toggleQuickTasks();
+      });
+      if (!regTasks) {
+        console.warn('Failed to register Alt+Shift+M, registering CommandOrControl+Shift+M');
+        globalShortcut.register('CommandOrControl+Shift+M', () => {
+          toggleQuickTasks();
+        });
+      }
+    } catch (err) {
+      console.warn('Global shortcut Alt+Shift+M registration error:', err);
     }
 
     // Auto save stats every 15 seconds

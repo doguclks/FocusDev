@@ -10,6 +10,7 @@ import { MiniDeskClockWidget } from './components/MiniDeskClockWidget';
 import { ZenClockWidget } from './components/ZenClockWidget';
 import { NotesView } from './components/NotesView';
 import { QuickCaptureModal } from './components/QuickCaptureModal';
+import { QuickTasksModal } from './components/QuickTasksModal';
 import { WindowInfo, DailyStats, AppSettings, DeepFocusState, NudgeEvent, ViewMode } from './types';
 
 const INITIAL_STATS: DailyStats = {
@@ -47,6 +48,14 @@ export const App: React.FC = () => {
 
   if (isQuickCapture) {
     return <QuickCaptureModal />;
+  }
+
+  const isQuickTasks =
+    window.location.search.includes('quickTasks=1') ||
+    window.location.hash === '#quick-tasks';
+
+  if (isQuickTasks) {
+    return <QuickTasksModal />;
   }
 
   const [activeTab, setActiveTab] = useState<'dashboard' | 'deepfocus' | 'analytics' | 'notes' | 'settings'>('dashboard');

@@ -105,7 +105,11 @@ export interface IElectronAPI {
   hideQuickCapture: () => Promise<void>;
   toggleQuickCapture: () => Promise<void>;
   onQuickCaptureFocus: (callback: () => void) => () => void;
+  hideQuickTasks: () => Promise<void>;
+  toggleQuickTasks: () => Promise<void>;
+  onQuickTasksFocus: (callback: () => void) => () => void;
   onTodosChanged: (callback: (todo: DailyTodo) => void) => () => void;
+  onTodoDeleted?: (callback: (id: string) => void) => () => void;
   onDailyLogChanged: (callback: (log: DailyLog) => void) => () => void;
   onNotesChanged: (callback: (note: GeneralNote) => void) => () => void;
 
