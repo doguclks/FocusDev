@@ -74,6 +74,7 @@ export const NotesView: React.FC<NotesViewProps> = ({ stats }) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dailyLogTextareaRef = useRef<HTMLTextAreaElement>(null);
   const noteContentTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const isSubmittingTodoRef = useRef(false);
 
   // Today key
   const todayKey = new Date().toISOString().split('T')[0];
@@ -423,13 +424,25 @@ export const NotesView: React.FC<NotesViewProps> = ({ stats }) => {
 
   // Add Todo
   const handleAddTodo = async () => {
-    if (!newTodoText.trim() || !window.electronAPI) return;
-    const created = await window.electronAPI.createTodo(currentDate, newTodoText.trim(), newTodoPriority);
-    setTodos((prev) => [...prev, created]);
-    setNewTodoText('');
-    setVimMode('NORMAL');
-    if (isListening) {
-      setIsListening(false);
+    const trimmed = newTodoText.trim();
+    if (!trimmed || !window.electronAPI || isSubmittingTodoRef.current) return;
+    isSubmittingTodoRef.current = true;
+
+    try {
+      setNewTodoText('');
+      setVimMode('NORMAL');
+      if (isListening) {
+        setIsListening(false);
+      }
+      const created = await window.electronAPI.createTodo(currentDate, trimmed, newTodoPriority);
+      setTodos((prev) => {
+        if (prev.some((t) => t.id === created.id)) return prev;
+        return [...prev, created];
+      });
+    } catch (err) {
+      console.error('Failed to add todo:', err);
+    } finally {
+      isSubmittingTodoRef.current = false;
     }
   };
 

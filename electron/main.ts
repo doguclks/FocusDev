@@ -641,20 +641,20 @@ public class KeyHelper {
       console.warn('Global shortcut Alt+Shift+N registration error:', err);
     }
 
-    // Register Global Shortcut for Quick Tasks HUD (Alt+Shift+M / Ctrl+Shift+M)
-    try {
-      const regTasks = globalShortcut.register('Alt+Shift+M', () => {
-        toggleQuickTasks();
-      });
-      if (!regTasks) {
-        console.warn('Failed to register Alt+Shift+M, registering CommandOrControl+Shift+M');
-        globalShortcut.register('CommandOrControl+Shift+M', () => {
+    // Register Global Shortcut for Quick Tasks HUD (Alt+Shift+M / Ctrl+Shift+M / Ctrl+M)
+    const registerTaskShortcut = (acc: string) => {
+      try {
+        globalShortcut.register(acc, () => {
           toggleQuickTasks();
         });
+      } catch (err) {
+        console.warn(`Global shortcut ${acc} registration error:`, err);
       }
-    } catch (err) {
-      console.warn('Global shortcut Alt+Shift+M registration error:', err);
-    }
+    };
+
+    registerTaskShortcut('Alt+Shift+M');
+    registerTaskShortcut('CommandOrControl+Shift+M');
+    registerTaskShortcut('CommandOrControl+M');
 
     // Auto save stats every 15 seconds
     setInterval(() => {

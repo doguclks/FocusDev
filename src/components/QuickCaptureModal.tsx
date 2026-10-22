@@ -12,6 +12,7 @@ export const QuickCaptureModal: React.FC = () => {
   const [isListening, setIsListening] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<any>(null);
+  const isSubmittingRef = useRef(false);
 
   const todayKey = new Date().toISOString().split('T')[0];
 
@@ -89,11 +90,12 @@ export const QuickCaptureModal: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    if (!text.trim() || !window.electronAPI) return;
-
     const trimmed = text.trim();
+    if (!trimmed || !window.electronAPI || isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
 
     try {
+      setText('');
       if (target === 'todo') {
         await window.electronAPI.createTodo(todayKey, trimmed, priority);
       } else if (target === 'log') {
@@ -108,13 +110,14 @@ export const QuickCaptureModal: React.FC = () => {
 
       setIsSaved(true);
       setTimeout(() => {
-        setText('');
         setIsSaved(false);
         switchMode('NORMAL');
         handleClose();
-      }, 300);
+      }, 250);
     } catch (err) {
       console.error('Failed to quick-capture:', err);
+    } finally {
+      isSubmittingRef.current = false;
     }
   };
 

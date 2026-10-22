@@ -27,6 +27,7 @@ export const QuickTasksModal: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const listContainerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const isSubmittingRef = useRef(false);
 
   const todayKey = new Date().toISOString().split('T')[0];
 
@@ -40,7 +41,10 @@ export const QuickTasksModal: React.FC = () => {
     if (window.electronAPI) {
       try {
         const data = await window.electronAPI.getTodosByDate(todayKey);
-        setTodos(data || []);
+        const unique = (data || []).filter(
+          (item, index, self) => index === self.findIndex((t) => t.id === item.id)
+        );
+        setTodos(unique);
       } catch (err) {
         console.error('Failed to load todos for quick tasks HUD:', err);
       }
@@ -128,14 +132,44 @@ export const QuickTasksModal: React.FC = () => {
   };
 
   const handleAddNew = async () => {
-    if (!newText.trim() || !window.electronAPI) return;
+    const trimmed = newText.trim();
+    if (!trimmed || !window.electronAPI || isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+
     try {
-      const created = await window.electronAPI.createTodo(todayKey, newText.trim(), newPriority);
-      setTodos((prev) => [...prev, created]);
       setNewText('');
       setIsAddingNew(false);
+      const created = await window.electronAPI.createTodo(todayKey, trimmed, newPriority);
+      setTodos((prev) => {
+        if (prev.some((t) => t.id === created.id)) return prev;
+        return [...prev, created];
+      });
     } catch (err) {
       console.error('Failed to create todo:', err);
+    } finally {
+      isSubmittingRef.current = false;
+    }
+  };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape' || (e.ctrlKey && e.key === '[')) {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsAddingNew(false);
+      setNewText('');
+      return;
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      handleAddNew();
+      return;
+    }
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      e.stopPropagation();
+      setNewPriority((prev) => (prev === 'normal' ? 'high' : prev === 'high' ? 'low' : 'normal'));
+      return;
     }
   };
 
@@ -172,24 +206,8 @@ export const QuickTasksModal: React.FC = () => {
         return;
       }
 
-      // If user is currently typing in the inline input
-      if (isAddingNew) {
-        if (e.key === 'Escape' || (e.ctrlKey && e.key === '[')) {
-          e.preventDefault();
-          setIsAddingNew(false);
-          setNewText('');
-          return;
-        }
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          handleAddNew();
-          return;
-        }
-        if (e.key === 'Tab') {
-          e.preventDefault();
-          setNewPriority((prev) => (prev === 'normal' ? 'high' : prev === 'high' ? 'low' : 'normal'));
-          return;
-        }
+      // If user is currently typing in the inline input, let input handle its own keys
+      if (isAddingNew || document.activeElement === inputRef.current) {
         return;
       }
 
@@ -383,6 +401,7 @@ export const QuickTasksModal: React.FC = () => {
               type="text"
               value={newText}
               onChange={(e) => setNewText(e.target.value)}
+              onKeyDown={handleInputKeyDown}
               placeholder="Yeni görevi yazın... (Enter: Ekle, Tab: Öncelik, Esc: İptal)"
               className="flex-1 bg-slate-900 border border-brand-500/60 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             />
