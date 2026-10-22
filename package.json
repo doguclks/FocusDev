@@ -1,0 +1,79 @@
+{
+  "name": "focus-dev",
+  "version": "1.0.0",
+  "description": "Smart YouTube time tracker and focus companion for remote engineers",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "concurrently -k \"vite\" \"wait-on tcp:5789 && cross-env NODE_ENV=development electron .\"",
+    "build:vite": "tsc && vite build",
+    "build:electron": "tsc -p tsconfig.electron.json",
+    "build": "npm run build:vite && npm run build:electron",
+    "test": "npx tsx tests/unit.test.ts",
+    "dist": "npm run build && electron-builder --dir",
+    "build:tracker": "cd electron/win-helper && dotnet publish -c Release -o ../../bin-win"
+  },
+  "build": {
+    "appId": "com.focusdev.app",
+    "productName": "Focus Dev",
+    "directories": {
+      "output": "dist-desktop"
+    },
+    "win": {
+      "target": "dir",
+      "icon": "assets/icon.ico",
+      "signAndEditExecutable": false
+    },
+    "extraResources": [
+      {
+        "from": "bin-win/WinTracker.exe",
+        "to": "bin-win/WinTracker.exe"
+      },
+      {
+        "from": "assets",
+        "to": "assets"
+      }
+    ],
+    "files": [
+      "dist-electron/**/*",
+      "dist/**/*",
+      "assets/**/*",
+      "bin-win/**/*",
+      "package.json"
+    ],
+    "asar": false
+  },
+  "keywords": [
+    "focus",
+    "youtube-tracker",
+    "productivity",
+    "electron",
+    "remote-work"
+  ],
+  "author": "FocusDev",
+  "license": "MIT",
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.16.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sql.js": "^1.15.1",
+    "tailwind-merge": "^2.5.4"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^22.10.2",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/sql.js": "^1.4.11",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.0",
+    "cross-env": "^7.0.3",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.16",
+    "typescript": "^5.7.2",
+    "wait-on": "^8.0.1"
+  }
+}

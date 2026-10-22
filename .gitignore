@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production & Build outputs
+dist/
+dist-electron/
+dist-desktop/
+
+# C# build artifacts
+electron/win-helper/bin/
+electron/win-helper/obj/
+
+# Logs & temp files
+*.log
+*.tmp
+*.lnk
+*.vbs
+stdout.txt
+stderr.txt
+out.txt
+out.log
+error.log
+
+# Scratch scripts
+*.ps1
+test-*.js
+check-*.js
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
